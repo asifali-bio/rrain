@@ -75,15 +75,7 @@ RRain allows you to simultaneously visualize:
 
 ## 🔧 Prototype stage
 
----
-
-## Future directions
-
-* continuous / volumetric tower rendering
-
----
-
-## License TBD
+* Eventually, continuous / volumetric tower rendering
 
 ---
 

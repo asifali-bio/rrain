@@ -2,7 +2,7 @@
   <img src="assets/rain.svg" width="220">
 </p>
 
-# 🌧️ Reverse Rain (RRain)
+# Reverse Rain (RRain)
 
 **RRain** is a visualization framework for representing high-dimensional data as **vertical structures in latent space**.
 
@@ -13,7 +13,7 @@ https://asifali-bio.github.io/rain/
 
 ---
 
-## 🧠 Concept
+## Concept
 
 RRain separates data into three intuitive dimensions:
 
@@ -25,7 +25,7 @@ Each sample becomes a **vertical column (tower)** of its features, positioned ac
 
 ---
 
-## 🎯 What it shows
+## What it shows
 
 RRain allows you to simultaneously visualize:
 
@@ -36,7 +36,7 @@ RRain allows you to simultaneously visualize:
 
 ---
 
-## 📊 Example use cases
+## Example use cases
 
 * Protein domain composition across species  
 * Single-cell RNA-seq profiles  
@@ -45,7 +45,7 @@ RRain allows you to simultaneously visualize:
 
 ---
 
-## 🧱 Basic workflow
+## Basic workflow
 
 1. Start with a feature matrix:
 
@@ -77,11 +77,11 @@ RRain allows you to simultaneously visualize:
 
 ---
 
-## 📌 Future directions * continuous / volumetric tower rendering * feature clustering along the z-axis * interactive filtering and highlighting * integration with analysis pipelines
+## Future directions * continuous / volumetric tower rendering * feature clustering along the z-axis * interactive filtering and highlighting * integration with analysis pipelines
 
 ---
 
-## 🧾 License TBD
+## License TBD
 
 ---
 

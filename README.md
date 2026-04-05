@@ -17,9 +17,9 @@ https://asifali-bio.github.io/rain/
 
 RRain separates data into three intuitive dimensions:
 
-* **(x, y)** → *latent embedding of samples*  
-* **z** → *feature index (e.g., Pfam domains, genes, variables)*  
-* **color / size** → *feature magnitude (e.g., TPM, counts)*  
+* **(x, y)** → *latent embedding of samples*
+* **z** → *feature index (e.g., Pfam domains, genes, variables)*
+* **color / size** → *feature magnitude (e.g., TPM, counts)*
 
 Each sample becomes a **vertical column (tower)** of its features, positioned according to similarity in latent space.
 
@@ -29,19 +29,19 @@ Each sample becomes a **vertical column (tower)** of its features, positioned ac
 
 RRain allows you to simultaneously visualize:
 
-* Global similarity between samples (via spatial proximity)  
-* Internal structure of each sample (via vertical patterns)  
-* Feature presence/absence (via sparsity or gaps)  
-* Feature magnitude (via size or color)  
+* Global similarity between samples (via spatial proximity)
+* Internal structure of each sample (via vertical patterns)
+* Feature presence/absence (via sparsity or gaps)
+* Feature magnitude (via size or color)
 
 ---
 
 ## Example use cases
 
-* Protein domain composition across species  
-* Single-cell RNA-seq profiles  
-* Microbiome abundance data  
-* Any high-dimensional feature matrix  
+* Protein domain composition across species
+* Single-cell RNA-seq profiles
+* Microbiome abundance data
+* Any high-dimensional feature matrix
 
 ---
 
@@ -49,35 +49,37 @@ RRain allows you to simultaneously visualize:
 
 1. Start with a feature matrix:
 
-   * rows = features  
-   * columns = samples  
+   * rows = features
+   * columns = samples
 
 2. Preprocess:
 
-   * handle missing values (e.g., NA → 0 for distance)  
-   * optionally filter low-variance features  
+   * handle missing values (e.g., NA → 0 for distance)
+   * optionally filter low-variance features
 
 3. Compute embedding:
 
-   * PCA, UMAP, etc.  
+   * PCA, UMAP, etc.
 
 4. Convert to long format:
 
-   * one row per (sample, feature)  
+   * one row per (sample, feature)
 
 5. Plot in 3D:
 
-   * x, y = embedding  
-   * z = feature index  
-   * color/size = feature value  
+   * x, y = embedding
+   * z = feature index
+   * color/size = feature value
 
 ---
 
-## 🔧 Status Prototype stage. Current focus: * refining visual encoding * improving structure clarity (beyond point clouds) * generalizing across datasets
+## 🔧 Prototype stage
 
 ---
 
-## Future directions * continuous / volumetric tower rendering * feature clustering along the z-axis * interactive filtering and highlighting * integration with analysis pipelines
+## Future directions
+
+* continuous / volumetric tower rendering
 
 ---
 

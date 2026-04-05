@@ -9,7 +9,7 @@
 It projects samples into a low-dimensional plane (e.g., PCA/UMAP), then stacks their features vertically—creating “towers” that resemble **upside-down rain** emerging from a cloud of points. Instead of points falling downward, features appear to **rise upward** from each sample’s position—like rain in reverse.
 
 ## 🌐 Demo
-https://asifali-bio.github.io/rain/
+https://asifali-bio.github.io/RRain/
 
 ---
 

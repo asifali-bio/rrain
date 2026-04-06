@@ -1,5 +1,6 @@
 library(tidyr)
 library(dplyr)
+library(plotly)
 
 
 load("pfam.RData")
@@ -69,8 +70,6 @@ long = merge(long, coords, by = "species")
 
 long$z = as.numeric(factor(long$pfam, levels = rownames(new4)))
 
-library(plotly)
-
 p = plot_ly(
   data = long,
   x = ~x,
@@ -81,7 +80,7 @@ p = plot_ly(
   color = ~species,
   colors = "Spectral",
   size = ~tpm,
-  sizes = c(2, 8),
+  sizes = c(1, 12),
   marker = list(opacity = 0.8)
 )
 

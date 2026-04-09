@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/rain_cloud.svg" width="220">
+  <img src="assets/rain_cloud_moji.svg" width="220">
 </p>
 
 # Reverse Rain (RRain)

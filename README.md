@@ -13,7 +13,7 @@ Instead of genes defining the primary structure, RRain aggregates expression int
 ---
 
 ## 🌐 Demo
-https://asifali-bio.github.io/RRain/
+https://asifali-bio.github.io/rrain/
 
 ---
 

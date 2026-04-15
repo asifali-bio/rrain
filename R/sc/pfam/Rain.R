@@ -4,6 +4,7 @@ library(tidyr)
 library(plotly)
 library(Seurat)
 
+
 download.file(
   "https://cf.10xgenomics.com/samples/cell-exp/1.1.0/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz",
   destfile = "pbmc3k.tar.gz"
@@ -15,6 +16,7 @@ pbmc.data <- Read10X(data.dir = "filtered_gene_bc_matrices/hg19/")
 pbmc <- CreateSeuratObject(counts = pbmc.data)
 
 save(pbmc, pbmc.data, file = "3K.RData")
+#clean environment
 load("3K.RData")
 
 pfam <- read.delim("pfam_output.tsv", header = FALSE)
@@ -84,7 +86,9 @@ dim(domain_matrix)
 domain_matrix_norm <- log1p(domain_matrix)
 
 #scale per cell
-domain_matrix_norm <- t(t(domain_matrix_norm) / colSums(domain_matrix_norm))
+cs <- colSums(domain_matrix_norm)
+cs[cs == 0] <- 1
+domain_matrix_norm <- t(t(domain_matrix_norm) / cs)
 
 #remove zero-variance domains
 domain_var <- apply(domain_matrix_norm, 1, var)
@@ -94,20 +98,26 @@ domain_matrix_filt <- domain_matrix_norm[domain_var > 0, ]
 cell_var <- apply(domain_matrix_filt, 2, var)
 domain_matrix_filt <- domain_matrix_filt[, cell_var > 0]
 
-
-#pca
+#PCA
 pca <- prcomp(t(domain_matrix_filt), scale. = TRUE)
 
-#preview pca
+#preview PCA
 plot(pca$x[,1], pca$x[,2],
      col = "blue",
      pch = 16,
      main = "PCA of Domain Matrix")
 
+#define valid cells
+valid_cells <- colnames(domain_matrix_filt)
 
+#subset Seurat object
+pbmc0 <- pbmc
+pbmc0 <- subset(pbmc0, cells = valid_cells)
+#force alignment
+pbmc0 <- pbmc0[, valid_cells]
 
 #overlay Seurat clustering
-pbmc0 <- NormalizeData(pbmc)
+pbmc0 <- NormalizeData(pbmc0)
 pbmc0 <- FindVariableFeatures(pbmc0)
 pbmc0 <- ScaleData(pbmc0)
 pbmc0 <- RunPCA(pbmc0)
@@ -121,15 +131,55 @@ plot(pca$x[,1], pca$x[,2],
      pch = 16,
      main = "Domain PCA colored by Seurat clusters")
 
+#flag
+USE_AZIMUTH <- FALSE
 
+if (USE_AZIMUTH) {
+  library(SeuratData)
+  
+  #load reference
+  reference <- LoadData("pbmcref", type = "azimuth")
+  
+  #run mapping
+  anchors <- FindTransferAnchors(
+    reference = reference,
+    query = pbmc0,
+    dims = 1:30
+  )
+  
+  pbmc0 <- MapQuery(
+    anchorset = anchors,
+    query = pbmc0,
+    reference = reference,
+    refdata = list(celltype = "celltype")
+  )
+  
+  #build metadata
+  meta_df <- data.frame(
+    cell = colnames(pbmc0),
+    cluster = as.factor(pbmc0$seurat_clusters),
+    celltype = pbmc0$predicted.celltype
+  )
+  
+} else {
+  #fallback
+  meta_df <- data.frame(
+    cell = colnames(pbmc0),
+    cluster = as.factor(pbmc0$seurat_clusters),
+    celltype = as.factor(pbmc0$seurat_clusters)
+  )
+}
 
-#transpose
-X <- t(domain_matrix)
-
-#pca coordinates
+#PCA coordinates
 coords <- as.data.frame(pca$x[,1:2])
-colnames(coords) <- c("x", "y")
+#enforce order and identity
+coords <- coords[valid_cells, ]
 coords$cell <- rownames(coords)
+colnames(coords)[1:2] <- c("x", "y")
+
+#safety
+stopifnot(all(valid_cells == coords$cell))
+stopifnot(all(valid_cells == meta_df$cell))
 
 #build long format
 df <- as.data.frame(domain_matrix)
@@ -145,21 +195,16 @@ long <- pivot_longer(
 #remove zeros
 long <- long %>% filter(tpm > 0)
 
-#attach pca coordinates
-long <- merge(long, coords, by.x = "cell", by.y = "cell")
+#attach PCA coordinates
+long <- long %>%
+  inner_join(meta_df, by = "cell") %>%
+  inner_join(coords, by = "cell")
 
 #define z-axis
 long$z <- as.numeric(factor(long$domain))
 
-#integrate clusters
-cluster_df <- data.frame(
-  cell = names(clusters),
-  cluster = as.factor(clusters)
-)
-
-long <- merge(long, cluster_df, by = "cell")
-
 save(long, file = "3D.RData")
+#clean environment
 load("3D.RData")
 
 long$tpm <- signif(long$tpm, 4)
@@ -176,12 +221,12 @@ p <- plot_ly(
   z = ~z,
   type = "scatter3d",
   mode = "markers",
-  color = ~cluster,
+  color = ~celltype,
   colors = "Spectral",
   size = ~tpm,
   sizes = c(1, 10),
   marker = list(opacity = 0.5),
-  showlegend = FALSE
+  showlegend = TRUE
 )
 
 p <- p %>% layout(

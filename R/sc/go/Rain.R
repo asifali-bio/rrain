@@ -224,7 +224,7 @@ long$y <- signif(long$y, 4)
 #trim
 long <- long %>% filter(tpm > 1)
 
-#thin out
+#prune
 set.seed(1)
 long <- long %>% sample_frac(0.6)
 

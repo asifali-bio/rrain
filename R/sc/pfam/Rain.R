@@ -123,6 +123,7 @@ pbmc0 <- ScaleData(pbmc0)
 pbmc0 <- RunPCA(pbmc0)
 pbmc0 <- FindNeighbors(pbmc0)
 pbmc0 <- FindClusters(pbmc0)
+pbmc0 <- RunUMAP(pbmc0, dims = 1:30)
 
 clusters <- pbmc0$seurat_clusters
 
@@ -172,6 +173,18 @@ if (USE_AZIMUTH) {
 
 #PCA coordinates
 coords <- as.data.frame(pca$x[,1:2])
+
+#UMAP coordinates
+coords_umap <- as.data.frame(Embeddings(pbmc0, "umap")[,1:2])
+#same order
+coords_umap <- coords_umap[colnames(pbmc0), ]
+#same elements
+stopifnot(setequal(colnames(pbmc0), rownames(coords_umap)))
+
+#UMAP flag
+USE_UMAP <- FALSE
+coords <- if (USE_UMAP) coords_umap else coords
+
 #enforce order and identity
 coords <- coords[valid_cells, ]
 coords$cell <- rownames(coords)

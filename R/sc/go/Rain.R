@@ -141,34 +141,26 @@ plot(pca$x[,1], pca$x[,2],
      pch = 16,
      main = "GO PCA colored by Seurat clusters")
 
-#flag
-USE_AZIMUTH <- FALSE
+table(pbmc0$seurat_clusters)
 
-if (USE_AZIMUTH) {
-  library(SeuratData)
-  
-  #load reference
-  reference <- LoadData("pbmcref", type = "azimuth")
-  
-  #run mapping
-  anchors <- FindTransferAnchors(
-    reference = reference,
-    query = pbmc0,
-    dims = 1:30
-  )
-  
-  pbmc0 <- MapQuery(
-    anchorset = anchors,
-    query = pbmc0,
-    reference = reference,
-    refdata = list(celltype = "celltype")
+#ANCHOR flag
+USE_ANCHOR <- FALSE
+
+if (USE_ANCHOR) {
+  #assign labels
+  cluster_labels <- c(
+    "0" = "CD4 T",
+    "1" = "CD14 Monocyte",
+    "2" = "B cell",
+    "3" = "NK cell",
+    "4" = "CD8 T"
   )
   
   #build metadata
   meta_df <- data.frame(
     cell = colnames(pbmc0),
     cluster = as.factor(pbmc0$seurat_clusters),
-    celltype = pbmc0$predicted.celltype
+    celltype = cluster_labels[as.character(pbmc0$seurat_clusters)]
   )
   
 } else {

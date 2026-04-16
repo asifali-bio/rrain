@@ -103,7 +103,7 @@ Each folder contains:
 
     - PCA embedding in **domain space**
 
-    - Optional cell type annotation (Azimuth toggle)
+    - Optional cell type annotation (manual toggle)
 
 ---
 

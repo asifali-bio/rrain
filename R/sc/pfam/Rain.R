@@ -133,6 +133,32 @@ plot(pca$x[,1], pca$x[,2],
 
 table(pbmc0$seurat_clusters)
 
+marker_list <- list(
+  
+  "CD4 T (naive)" = c("CD3D", "IL7R", "CCR7"),
+  
+  "CD14 Monocyte" = c("LYZ", "CD14", "S100A8"),
+  
+  "B cell" = c("MS4A1", "CD79A"),
+  
+  "NK cell" = c("NKG7", "GNLY"),
+  
+  "CD8 T" = c("CD3D", "CD8A"),
+  
+  "FCGR3A Monocyte" = c("FCGR3A", "MS4A7"),
+  
+  "Dendritic cell" = c("FCER1A", "CST3"),
+  
+  "Platelet" = c("PPBP", "PF4"),
+  
+  "Megakaryocyte" = c("PPBP", "ITGA2B"),
+  
+  "Plasma cell" = c("MZB1", "SDC1"),
+  
+  "CD4 T (memory)" = c("CD3D", "IL7R", "S100A4")
+  
+)
+
 #ANCHOR flag
 USE_ANCHOR <- FALSE
 

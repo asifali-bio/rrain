@@ -169,7 +169,7 @@ marker_list <- list(
   
 )
 
-#ANCHOR flag
+#ANCHOR FLAG
 USE_ANCHOR <- FALSE
 
 if (USE_ANCHOR) {

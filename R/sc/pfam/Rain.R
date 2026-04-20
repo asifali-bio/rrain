@@ -81,33 +81,10 @@ for (d in domains) {
 #domains × cells
 dim(domain_matrix)
 
-#log-normalize
-domain_matrix_norm <- log1p(domain_matrix)
-
-#scale per cell
-cs <- colSums(domain_matrix_norm)
-cs[cs == 0] <- 1
-domain_matrix_norm <- t(t(domain_matrix_norm) / cs)
-
-#remove zero-variance domains
-domain_var <- apply(domain_matrix_norm, 1, var)
-domain_matrix_filt <- domain_matrix_norm[domain_var > 0, ]
-
-#remove zero-variance cells
-cell_var <- apply(domain_matrix_filt, 2, var)
-domain_matrix_filt <- domain_matrix_filt[, cell_var > 0]
-
-#PCA
-pca <- prcomp(t(domain_matrix_filt), scale. = TRUE)
-
-#preview PCA
-plot(pca$x[,1], pca$x[,2],
-     col = "blue",
-     pch = 16,
-     main = "PCA of Domain Matrix")
-
+#remove truly empty cells
+cs <- colSums(domain_matrix)
 #define valid cells
-valid_cells <- colnames(domain_matrix_filt)
+valid_cells <- names(cs[cs > 0])
 
 #subset Seurat object
 pbmc0 <- pbmc
@@ -116,20 +93,11 @@ pbmc0 <- subset(pbmc0, cells = valid_cells)
 pbmc0 <- pbmc0[, valid_cells]
 
 #overlay Seurat clustering
-pbmc0 <- NormalizeData(pbmc0)
-pbmc0 <- FindVariableFeatures(pbmc0)
-pbmc0 <- ScaleData(pbmc0)
-pbmc0 <- RunPCA(pbmc0)
-pbmc0 <- FindNeighbors(pbmc0)
+pbmc0 <- SCTransform(pbmc0, verbose = FALSE)
+pbmc0 <- RunPCA(pbmc0, assay = "SCT")
+pbmc0 <- FindNeighbors(pbmc0, dims = 1:30)
 pbmc0 <- FindClusters(pbmc0)
 pbmc0 <- RunUMAP(pbmc0, dims = 1:30)
-
-clusters <- pbmc0$seurat_clusters
-
-plot(pca$x[,1], pca$x[,2],
-     col = clusters,
-     pch = 16,
-     main = "Domain PCA colored by Seurat clusters")
 
 table(pbmc0$seurat_clusters)
 
@@ -195,14 +163,18 @@ if (USE_ANCHOR) {
 }
 
 #PCA coordinates
-coords <- as.data.frame(pca$x[,1:2])
+coords <- as.data.frame(Embeddings(pbmc0, "pca")[,1:2])
+#force alignment
+coords <- coords[colnames(pbmc0), ]
+#check every cell
+stopifnot(all(colnames(pbmc0) == rownames(coords)))
 
 #UMAP coordinates
 coords_umap <- as.data.frame(Embeddings(pbmc0, "umap")[,1:2])
-#force order
+#force alignment
 coords_umap <- coords_umap[colnames(pbmc0), ]
 #check every cell
-stopifnot(setequal(colnames(pbmc0), rownames(coords_umap)))
+stopifnot(all(colnames(pbmc0) == rownames(coords_umap)))
 
 #UMAP FLAG
 USE_UMAP <- FALSE
@@ -243,6 +215,10 @@ save(long, file = "3D.RData")
 #clean environment
 load("3D.RData")
 
+#UMAP FLAG
+USE_UMAP <- FALSE
+axis_label <- if (USE_UMAP) "UMAP" else "PC"
+
 long$tpm <- signif(long$tpm, 4)
 long$x <- signif(long$x, 4)
 long$y <- signif(long$y, 4)
@@ -272,8 +248,8 @@ p <- plot_ly(
 p <- p %>% layout(
   title = "3D Cell Towers (Domain composition)",
   scene = list(
-    xaxis = list(title = "PC1"),
-    yaxis = list(title = "PC2"),
+    xaxis = list(title = paste0(axis_label, "1")),
+    yaxis = list(title = paste0(axis_label, "2")),
     zaxis = list(title = "Domain index")
   )
 )

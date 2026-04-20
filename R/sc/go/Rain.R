@@ -92,7 +92,7 @@ for (g in go_terms) {
 dim(go_matrix)
 
 #remove truly empty cells
-cs <- colSums(domain_matrix)
+cs <- colSums(go_matrix)
 #define valid cells
 valid_cells <- names(cs[cs > 0])
 

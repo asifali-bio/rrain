@@ -220,7 +220,7 @@ long <- long %>%
   inner_join(coords, by = "cell")
 
 #define z-axis
-long$z <- as.numeric(factor(long$go_id, levels = go_terms))
+long$z <- as.numeric(factor(long$go_id))
 
 save(long, axis_label, file = "3D.RData")
 #clean environment

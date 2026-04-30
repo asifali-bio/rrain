@@ -210,7 +210,7 @@ long <- long %>%
   inner_join(coords, by = "cell")
 
 #define z-axis
-long$z <- as.numeric(factor(long$domain, levels = domains))
+long$z <- as.numeric(factor(long$domain))
 
 save(long, axis_label, file = "3D.RData")
 #clean environment

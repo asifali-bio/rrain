@@ -113,10 +113,6 @@ table(pbmc0$seurat_clusters)
 
 markers <- FindAllMarkers(pbmc0, only.pos = TRUE)
 
-markers %>%
-  group_by(cluster) %>%
-  top_n(10, avg_log2FC)
-
 marker_list <- list(
   
   "CD4 T (naive)" = c("CD3D", "IL7R", "CCR7"),
